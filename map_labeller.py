@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
-import sys
 import os
-import datetime
-import csv
-import numpy as np
-import math
 from os import listdir
 from os.path import isfile, join
-import point_matching as pm
-from threading import Thread
-
 import cv2
 import tkinter as tk
 from tkinter import filedialog
-from matplotlib import pyplot as plt
+import utilities as util
 
 position = None
 position_changed = False
@@ -90,50 +82,6 @@ def draw_ref_pt(image,pos,label=None):
     
     return image
 
-def draw_textline(image,string,org=[5,30],scale=1.0,c=(0,0,0),c2=(255,255,255),t=2,border=True):
-    font = cv2.FONT_HERSHEY_PLAIN
-    if border: image = cv2.putText(image,string,org,font,scale,c2,t+1,cv2.LINE_AA)
-    image = cv2.putText(image,string,org,font,scale,c,t,cv2.LINE_AA)
-
-def export(dir,filename,ref_dict):
-    try:
-        pts_file = filename+".pts"
-        f = open(os.path.join(dir,pts_file),"w+")
-        f.write(filename+"\n")
-        for p in sorted(ref_dict.keys()):
-            write_str = str(p)+","+str(ref_dict[p][0])+","+str(ref_dict[p][1])+"\n"
-            f.write(write_str)
-        f.close()
-        print("POINT DICT EXPORTED TO " + filename)
-    except:
-        print("Unable to export points")
-
-def import_pts(pts_file):
-    print("Importing "+str(pts_file)+" ...")
-    try:
-        point_dict = dict()
-        f = open(pts_file,"r")
-        lines = f.readlines()
-        lines = lines[1:]
-        for line in lines:
-            data = line.split(',')
-            # print(data)
-            if data[0].isnumeric():
-                marker = int(data[0])
-            else:
-                marker = data[0]
-            x = int(data[1])
-            y = int(data[2][:-1])
-            coords = [x,y]
-            point_dict[marker] = coords
-        print("Imported point dict:")
-        print(point_dict)
-        return point_dict
-    except:
-        print("PTS IMPORT FAILED")
-        return None
-
-
 
 # Create a simple GUI to select an image file
 root = tk.Tk()
@@ -141,8 +89,7 @@ root.withdraw()  # Hide the main window
 # center_window(root,1920,1080)
 root.geometry(f"{1920}x{1080}+{0}+{0}")
 # Ask the user to select an image file using a file dialog
-initial_dir = 'C:/Users/nullp/Projects/map_accuracy_eval/input'
-initial_dir = 'C:/Users/nullp/Documents/RoboCup24/70_maps/p1/alert/1'
+initial_dir = '.'
 file_path = filedialog.askopenfilename(title="Select an image file", filetypes=[("Image files", "*.jpg *.jpeg *.png *.bmp *.gif *.tiff *.tif *.pgm *.ppm *.pnm")], initialdir=initial_dir)
 file_name = os.path.basename(file_path)
 file_dir = os.path.dirname(file_path)
@@ -189,7 +136,7 @@ if file_path:
                 current_key = keys[lbl_index]
                 current_val = point_dict[current_key]
             status_str = "{}/{} - {}: {}".format(lbl_index+1,len(point_dict),current_key,current_val)
-            draw_textline(draw_img,status_str,scale = 2)
+            util.draw_textline(draw_img,status_str,scale = 2)
             update = False
 
         # Display the image 
@@ -210,12 +157,12 @@ if file_path:
             f, extension = os.path.splitext(file_name)
             pts_file = "pts\\"+f+".pts"
             pts_file = os.path.join(file_dir,pts_file)
-            point_dict = import_pts(pts_file)
+            point_dict = util.import_pts(pts_file)
             update = True
         if k == ord('x'): # Export pts (to file_dir/pts/[image_name].pts)
             f, extension = os.path.splitext(file_name)
             filename = "pts\\"+f+"_pts.jpg"
-            export(os.path.join(file_dir,"pts"),f,point_dict)
+            util.export(os.path.join(file_dir,"pts"),f,point_dict)
             cv2.imwrite(os.path.join(file_dir,filename),draw_img)
             print("Saved {}".format(os.path.join(file_dir,filename)))
         if k == ord('1'): # PREVIOUS REF POINT

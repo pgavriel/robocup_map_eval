@@ -70,6 +70,8 @@ def import_pts(pts_file):
     
 def export(dir,filename,ref_dict):
     try:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
         pts_file = filename+".pts"
         f = open(os.path.join(dir,pts_file),"w+")
         f.write(filename+"\n")
