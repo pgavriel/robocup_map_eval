@@ -1,54 +1,55 @@
 import os
 import argparse
 import cv2
-import point_matching as pm 
+# import point_matching as pm 
+import utilities as util
 
-# HAZMAT CORRESPONDENCE LABELS (QR NUMBER: HAZMAT LABEL)
-hazmat_dict = {
-    1 : "",
-    2: "",
-    3: "Radioactive",
-    4: "Corrosive",
-    5: "Explosives",
-    6: "",
-    7: "",
-    8: "",
-    9: "Fuel_Oil",
-    10: "Flammable Solid_2",
-    11: "",
-    12: "",
-    13: "Inhalation Hazard",
-    14: "",
-    15: "Spontaneously Combustable",
-    16: "?_2",
-    17: "",
-    18: "Flammable Gas_2",
-    19: "",
-    20: "",
-    21: "",
-    # 22: "Organic Peroxide_1",
-    23: "Oxidizer",
-    24: "",
-    25: "",
-    26: "",
-    27: "",
-    28: "",
-    29: "",
-    30: "Non-Flammable Gas_2",
-    31: "Organic Peroxide",
-    32: "",
-    33: "",
-    34: "",
-    35: "",
-    36: "",
-    37: "Poison",
-    38: "Blasting Agent",
-    39: "Dangerous_when_Wet",
-    40: "",
-    41: "",
-    42: "Oxygen",
-    # 43: "Flammable Gas_4"
-}
+# # HAZMAT CORRESPONDENCE LABELS (QR NUMBER: HAZMAT LABEL)
+# hazmat_dict = {
+#     1 : "",
+#     2: "",
+#     3: "Radioactive",
+#     4: "Corrosive",
+#     5: "Explosives",
+#     6: "",
+#     7: "",
+#     8: "",
+#     9: "Fuel_Oil",
+#     10: "Flammable Solid_2",
+#     11: "",
+#     12: "",
+#     13: "Inhalation Hazard",
+#     14: "",
+#     15: "Spontaneously Combustable",
+#     16: "?_2",
+#     17: "",
+#     18: "Flammable Gas_2",
+#     19: "",
+#     20: "",
+#     21: "",
+#     # 22: "Organic Peroxide_1",
+#     23: "Oxidizer",
+#     24: "",
+#     25: "",
+#     26: "",
+#     27: "",
+#     28: "",
+#     29: "",
+#     30: "Non-Flammable Gas_2",
+#     31: "Organic Peroxide",
+#     32: "",
+#     33: "",
+#     34: "",
+#     35: "",
+#     36: "",
+#     37: "Poison",
+#     38: "Blasting Agent",
+#     39: "Dangerous_when_Wet",
+#     40: "",
+#     41: "",
+#     42: "Oxygen",
+#     # 43: "Flammable Gas_4"
+# }
 
 def import_pts(pts_file):
     print("Importing "+str(pts_file)+" ...")
@@ -95,37 +96,37 @@ def create_hazmat_dict(dir,filename,qr_dict):
         f.write(filename+"\n")
         for p in sorted(qr_dict.keys()):
             qr_int = int(p.split('_')[-1])
-            write_str = hazmat_dict[qr_int]+","+str(qr_dict[p][0])+","+str(qr_dict[p][1])+"\n"
+            write_str = util.hazmat_dict[qr_int]+","+str(qr_dict[p][0])+","+str(qr_dict[p][1])+"\n"
             f.write(write_str)
         f.close()
         print("POINT DICT EXPORTED TO " + filename)
     except:
         print("Unable to export points")
 
-def draw_textline(image,string,org=[5,30],scale=1.0,c=(0,0,0),c2=(255,255,255),t=2,border=True):
-    font = cv2.FONT_HERSHEY_PLAIN
-    if border: image = cv2.putText(image,string,org,font,scale,c2,t+1,cv2.LINE_AA)
-    image = cv2.putText(image,string,org,font,scale,c,t,cv2.LINE_AA)
+# def draw_textline(image,string,org=[5,30],scale=1.0,c=(0,0,0),c2=(255,255,255),t=2,border=True):
+#     font = cv2.FONT_HERSHEY_PLAIN
+#     if border: image = cv2.putText(image,string,org,font,scale,c2,t+1,cv2.LINE_AA)
+#     image = cv2.putText(image,string,org,font,scale,c,t,cv2.LINE_AA)
 
-def draw_ref_pt(image,pos,label=None,color=(0,0,255)):
-    # print("Drawing Point \"{}\" at {}".format(label,pos))
-    pos[0] = int(pos[0])
-    pos[1] = int(pos[1])
-    # cv.circle(im, center, 3, (0, 25, 255), 2)
-    d = 10
-    t = 1
-    cv2.line(image,(pos[0],pos[1]-d),(pos[0],pos[1]+d),color,t)
-    cv2.line(image,(pos[0]-d,pos[1]),(pos[0]+d,pos[1]),color,t)
-    if label is not None:
-        font = cv2.FONT_HERSHEY_PLAIN
-        font_scale = 1
-        thickness = 1
-        lbl_offset = [2,-5]
-        org = (pos[0]+lbl_offset[0],pos[1]+lbl_offset[1])
-        image = cv2.putText(image,str(label),org,font,font_scale,(255,255,255),thickness+1,cv2.LINE_AA)
-        image = cv2.putText(image,str(label),org,font,font_scale,color,thickness,cv2.LINE_AA)
+# def draw_ref_pt(image,pos,label=None,color=(0,0,255)):
+#     # print("Drawing Point \"{}\" at {}".format(label,pos))
+#     pos[0] = int(pos[0])
+#     pos[1] = int(pos[1])
+#     # cv.circle(im, center, 3, (0, 25, 255), 2)
+#     d = 10
+#     t = 1
+#     cv2.line(image,(pos[0],pos[1]-d),(pos[0],pos[1]+d),color,t)
+#     cv2.line(image,(pos[0]-d,pos[1]),(pos[0]+d,pos[1]),color,t)
+#     if label is not None:
+#         font = cv2.FONT_HERSHEY_PLAIN
+#         font_scale = 1
+#         thickness = 1
+#         lbl_offset = [2,-5]
+#         org = (pos[0]+lbl_offset[0],pos[1]+lbl_offset[1])
+#         image = cv2.putText(image,str(label),org,font,font_scale,(255,255,255),thickness+1,cv2.LINE_AA)
+#         image = cv2.putText(image,str(label),org,font,font_scale,color,thickness,cv2.LINE_AA)
     
-    return image
+#     return image
 
 def dict_apply_flip(input_dict, flip_x=False, flip_y=False):
     for p in input_dict:
@@ -139,13 +140,9 @@ def dict_apply_flip(input_dict, flip_x=False, flip_y=False):
 # OpenCV Callbacks ======================================================
 # Callback function for the trackbars
 def update_scale(val):
-    global eval_pt_scale
-    # eval_pt_scale = val / 100  # scale will be from 0 to 10
     print(f"Scale: {val}")
 
 def update_rotation(val):
-    global eval_pt_rotation
-    # eval_pt_rotation = val  # rotation will be from 0 to 360 degrees
     print(f"Rotation: {val}")
 
 # Mouse callback function
@@ -172,30 +169,28 @@ def main(args):
     current_pos = 0 # Index position within eval points
     # Flags
     running = True
-    show_qr = True
     update = True
 
 
     # GROUND TRUTH POINTS & MAP IMAGE ======================================
-    base_dir = "./data/ground_truth/pts"
     gt_file = "LabGroundTruth.pts"
-    qr_pts = import_pts(os.path.join(base_dir,gt_file))
-    create_hazmat_dict(base_dir,"LabGroundTruth_hazmat",qr_pts)
-    haz_pts = import_pts(os.path.join(base_dir,"LabGroundTruth_hazmat.pts"))
-    obj_pts = import_pts(os.path.join(base_dir,"LabGroundTruth_objects.pts"))
-    real_pts = import_pts(os.path.join(base_dir,"LabGroundTruth_real.pts"))
+    qr_pts = import_pts(os.path.join(args.gt_dir,gt_file))
+    create_hazmat_dict(args.gt_dir,"LabGroundTruth_hazmat",qr_pts)
+    haz_pts = import_pts(os.path.join(args.gt_dir,"LabGroundTruth_hazmat.pts"))
+    obj_pts = import_pts(os.path.join(args.gt_dir,"LabGroundTruth_objects.pts"))
+    real_pts = import_pts(os.path.join(args.gt_dir,"LabGroundTruth_real.pts"))
     ptslist_position = 0
     pts_list = [qr_pts, haz_pts, obj_pts, real_pts]
     lbls_list = ["QR", "Hazmat", "Objects (Images)", "Objects (Real)"]
-    map_file = "../LabGroundTruth.png"
-    map_img = cv2.imread(os.path.join(base_dir,map_file))
+    # Ground Truth Map
+    map_img = cv2.imread(os.path.join(args.gt_dir,args.gt_map))
+    height, width, _ = map_img.shape
+    map_img_center = [width//2, height//2]
 
     #EVALUATION POINTS FILE =================================================
-    base_dir = './data/eval/example'
-    original_file = "eval.pts"
-    eval_pts = import_pts(os.path.join(base_dir,original_file))
+    eval_pts = import_pts(os.path.join(args.eval_dir,args.eval_file))
     eval_pts = dict_apply_flip(eval_pts,flip_x,flip_y)
-    eval_pts = pm.move_dict_to(eval_pts,[567, 335])
+    eval_pts = util.move_dict_to(eval_pts,map_img_center)
     new_eval_pts = eval_pts.copy()
 
     # CV Window ==============================================================
@@ -203,15 +198,15 @@ def main(args):
     cv2.createTrackbar('Scale', 'Robocup Map Eval', eval_pt_scale, 1000, update_scale)  # scale from 0.0 to 10.0
     cv2.createTrackbar('Rotation', 'Robocup Map Eval', eval_pt_rotation, 360, update_rotation)  # rotation from 0 to 360 degrees
     cv2.setMouseCallback('Robocup Map Eval', mouse_callback)
-    new_eval_pts = pm.scale_dict(new_eval_pts,eval_pt_scale)
-    new_eval_pts = pm.rotate_dict(new_eval_pts,eval_pt_rotation)
+    new_eval_pts = util.scale_dict(new_eval_pts,eval_pt_scale)
+    new_eval_pts = util.rotate_dict(new_eval_pts,eval_pt_rotation)
 
     # Running loop
     while running:
         # When image is clicked, move center point of eval points to mouse position
         if click_flag:
-            eval_pts = pm.move_dict_to(eval_pts,[mouse_x,mouse_y])
-            new_eval_pts = pm.move_dict_to(new_eval_pts,[mouse_x,mouse_y])
+            eval_pts = util.move_dict_to(eval_pts,[mouse_x,mouse_y])
+            new_eval_pts = util.move_dict_to(new_eval_pts,[mouse_x,mouse_y])
             update = True
             click_flag = False
         
@@ -220,15 +215,15 @@ def main(args):
         if tb_scale != eval_pt_scale:
             eval_pt_scale = tb_scale
             new_eval_pts = eval_pts.copy()
-            new_eval_pts = pm.scale_dict(new_eval_pts,eval_pt_scale)
-            new_eval_pts = pm.rotate_dict(new_eval_pts,eval_pt_rotation)
+            new_eval_pts = util.scale_dict(new_eval_pts,eval_pt_scale)
+            new_eval_pts = util.rotate_dict(new_eval_pts,eval_pt_rotation)
             update = True
 
         # Check whether to update eval points rotation     
         tb_rot = cv2.getTrackbarPos('Rotation', 'Robocup Map Eval')
         if tb_rot != eval_pt_rotation:
             print(f"Dif:{eval_pt_rotation-tb_rot}")
-            new_eval_pts = pm.rotate_dict(new_eval_pts,tb_rot-eval_pt_rotation)
+            new_eval_pts = util.rotate_dict(new_eval_pts,tb_rot-eval_pt_rotation)
             eval_pt_rotation = tb_rot
             update = True
 
@@ -237,24 +232,25 @@ def main(args):
             display_img = map_img.copy()
             # Draw Ground Truth Points
             for p in pts_list[ptslist_position]: 
-                draw_ref_pt(display_img,pts_list[ptslist_position][p],p)
+                util.draw_ref_pt(display_img,pts_list[ptslist_position][p],p)
             s = "Showing "+lbls_list[ptslist_position]+" Ground Truth"
-            draw_textline(display_img,s,t=1,scale=2.0)
+            util.draw_textline(display_img,s,t=1,scale=2.0)
 
 
             # Decide how to draw Eval Points based on current_mode 
             if current_mode == 0:
-                for p in new_eval_pts: draw_ref_pt(display_img,new_eval_pts[p],p,color=(32,50,1))
+                for p in new_eval_pts: 
+                    util.draw_ref_pt(display_img,new_eval_pts[p],p,color=(32,50,1))
                 s = "[Show All]"
-                draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
+                util.draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
             elif current_mode == 1:
                 keys = list(new_eval_pts.keys())
-                draw_ref_pt(display_img,new_eval_pts[keys[current_pos]],keys[current_pos],color=(32,50,1))
+                util.draw_ref_pt(display_img,new_eval_pts[keys[current_pos]],keys[current_pos],color=(32,50,1))
                 s = f"[Evaluating] Position {current_pos+1}/{len(new_eval_pts.keys())}: {keys[current_pos]} @ {new_eval_pts[keys[current_pos]]}"
-                draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
+                util.draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
             elif current_mode == 2:
                 s = "[Hide Eval Points]"
-                draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
+                util.draw_textline(display_img,s,org=[5,60],t=1,c=(32,50,1),scale=1.5)
             update = False
 
         # Display the image 
@@ -296,8 +292,21 @@ def main(args):
             update = True
 
 if __name__ == "__main__":
-    pass
-    parser = argparse.ArgumentParser(description="Robocup '24 Labyrinth Map Evaluation Tool")
+    # PARAMETER DEFAULT VALUES
+    gt_base_dir = "./data/ground_truth/pts"         # Ground Truth Data Base Directory
+    gt_map_image_file = "../LabGroundTruth.png"     # Ground Truth Image Filename
+    eval_base_dir = "./data/eval/example"           # Evaluation Data Base Directory
+    eval_file = "eval.pts"                          # Evaluation Data Filename
 
+    parser = argparse.ArgumentParser(description="Robocup '24 Labyrinth Map Evaluation Tool")
+    parser.add_argument('--gt_dir', dest='gt_dir', type=str, default=gt_base_dir,
+                        help='Ground Truth Data Base Directory')
+    parser.add_argument('-g', '--gt_map', dest='gt_map', type=str, default=gt_map_image_file,
+                        help='Ground Truth Image Filename')
+    parser.add_argument('--eval_dir', dest='eval_dir', type=str, default=eval_base_dir,
+                        help='Evaluation Data Base Directory')
+    parser.add_argument('-e', '--eval_file', dest='eval_file', type=str, default=eval_file,
+                        help='Evaluation Data Filename (.pts file)')
+    
     args = parser.parse_args()
     main(args)
